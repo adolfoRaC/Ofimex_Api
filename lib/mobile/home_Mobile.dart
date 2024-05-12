@@ -3,19 +3,19 @@ import 'package:ionicons/ionicons.dart';
 import 'package:ofimex/theme/hotel_app_theme.dart';
 import 'package:ofimex/widgets/InputTextFoemField.dart';
 import 'package:ofimex/widgets/ServicioTypeMenu.dart';
-import 'package:ofimex/widgets/cardServices.dart';
+import 'package:ofimex/widgets/cardTrabajador.dart';
 import 'package:ofimex/widgets/custom_icon_button.dart';
-import 'package:ofimex/widgets/location_card.dart';
+import 'package:ofimex/widgets/location_card_mobile.dart';
 import 'package:ofimex/widgets/nearby.dart';
 import 'package:ofimex/widgets/recommended_servicios.dart';
 import 'package:ofimex/models/trabajador_list_data.dart';
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePageMobile extends StatefulWidget {
+  const HomePageMobile({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageMobileState createState() => _HomePageMobileState();
 }
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin<HomePage> {
+class _HomePageMobileState extends State<HomePageMobile> with TickerProviderStateMixin<HomePageMobile> {
   final TextEditingController txtSearchController = TextEditingController();
   late AnimationController animationController;
   List<TrabjadorListData> listTrabajador = TrabjadorListData.listTrabajador;
@@ -40,6 +40,7 @@ Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
   }
+  
   Widget getListUI() {
     return Container(
       decoration: BoxDecoration(
@@ -74,9 +75,9 @@ Future<bool> getData() async {
                       );
                       animationController.forward();
                       return TrabajadorListView(
-                        callback: () { Navigator.pushNamed(context, "/datailServicio",
+                        callback: () { Navigator.pushNamed(context, "/datailTrabajadorMobile",
                           arguments: listTrabajador[index]);},
-                        hotelData: listTrabajador[index],
+                        trabajadorData: listTrabajador[index],
                         animation: animation,
                         animationController: animationController,
                       );
@@ -112,7 +113,8 @@ Future<bool> getData() async {
           Padding(
             padding: EdgeInsets.only(left: 8.0, right: 12),
             child: CustomIconButton(
-              icon: Icon(Ionicons.file_tray_outline),
+              icon: Icon(Icons.history),
+              
             ),
           ),
           Padding(
@@ -137,7 +139,7 @@ Future<bool> getData() async {
               inputType: TextInputType.text,
             ),
           ),
-          const LocationCard(),
+          const LocationCardMobile(),
           const SizedBox(
             height: 15,
           ),
@@ -160,7 +162,7 @@ Future<bool> getData() async {
             ],
           ),
           const SizedBox(height: 10),
-          const RecommendedServicos(),
+           RecommendedServicos(),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

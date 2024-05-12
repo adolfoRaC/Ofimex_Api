@@ -7,6 +7,7 @@ class CustomIconButton extends StatelessWidget {
     required this.icon,
   }) : super(key: key);
   final Widget icon;
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,7 +16,9 @@ class CustomIconButton extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed("/historial");
+        },
         constraints: const BoxConstraints.tightFor(width: 40),
         color: Colors.black54,
         icon: icon,

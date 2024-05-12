@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geocode/geocode.dart';
 
 import 'package:latlong2/latlong.dart';
 import 'package:ofimex/theme/theme.dart';
@@ -8,14 +9,14 @@ import 'package:geocoding/geocoding.dart';
 import 'package:ofimex/widgets/dialog.dart';
 import 'package:readmore/readmore.dart';
 
-class LocationCard extends StatefulWidget {
-  const LocationCard({Key? key}) : super(key: key);
+class LocationCardWeb extends StatefulWidget {
+  const LocationCardWeb({Key? key}) : super(key: key);
 
   @override
-  State<LocationCard> createState() => _LocationCardState();
+  State<LocationCardWeb> createState() => _LocationCardWebState();
 }
 
-class _LocationCardState extends State<LocationCard> {
+class _LocationCardWebState extends State<LocationCardWeb> {
    LatLng? myPosition;
   bool _isLoading = true;
   String? _errorMessage;
@@ -73,18 +74,18 @@ class _LocationCardState extends State<LocationCard> {
       LatLng newPosition = LatLng(position.latitude, position.longitude);
 
       // Obtener dirección desde las coordenadas
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
+      GeoCode geoCode = GeoCode(); // Crea una instancia de GeoCode
 
-      String address = placemarks.isNotEmpty
-          ? '${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].country}, ${placemarks[0].postalCode}'
-          : 'Dirección no disponible';
+      // Geocodificar las coordenadas para obtener una dirección
+      Address address = await geoCode.reverseGeocoding(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
 
       setState(() {
         myPosition = newPosition;
-        _address = address; // Guardar la dirección obtenida
+               _address = '${address.city}, ${address.countryCode}, ${address.countryName}, ${address.postal}, ${address.region},${address.streetAddress}'; // Guardar la dirección obtenida
+
         _isLoading = false;
         _errorMessage = null;
       });
@@ -100,7 +101,7 @@ class _LocationCardState extends State<LocationCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed("/map");
+        Navigator.of(context).pushNamed("/mapWeb");
       },
       child: Card(
         elevation: 0.4,

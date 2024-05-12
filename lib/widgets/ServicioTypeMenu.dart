@@ -14,10 +14,10 @@ class ServicioTypeMenu extends StatefulWidget {
 class _ServicioTypeMenuState extends State<ServicioTypeMenu> {
     void ServicioTypeMenuSelected(int index) {
     setState(() {
-      for(int i = 0; i<touristPlaces.length; i++){
-        touristPlaces[i].isSelected = false;
+      for(int i = 0; i<typeServices.length; i++){
+        typeServices[i].isSelected = false;
       }
-      touristPlaces[index].isSelected = true;
+      typeServices[index].isSelected = true;
     });
   }
   @override
@@ -35,11 +35,11 @@ class _ServicioTypeMenuState extends State<ServicioTypeMenu> {
               });
             },
             child: Chip(
-              label: Text(touristPlaces[index].name,style: TextStyle(color: touristPlaces[index].isSelected == false ? Colors.black: Colors.white),),
+              label: Text(typeServices[index].name,style: TextStyle(color: typeServices[index].isSelected == false ? Colors.black: Colors.white),),
               avatar: CircleAvatar(
-                backgroundImage: AssetImage(touristPlaces[index].image),
+                backgroundImage: AssetImage(typeServices[index].image),
               ),
-              backgroundColor: touristPlaces[index].isSelected == false ? Colors.white: Colors.black,
+              backgroundColor: typeServices[index].isSelected == false ? Colors.white: Colors.black,
               elevation: 0.4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -49,7 +49,7 @@ class _ServicioTypeMenuState extends State<ServicioTypeMenu> {
         },
         separatorBuilder: (context, index) =>
             const Padding(padding: EdgeInsets.only(right: 10)),
-        itemCount: touristPlaces.length,
+        itemCount: typeServices.length,
       ),
     );
   }

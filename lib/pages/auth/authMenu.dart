@@ -11,6 +11,12 @@ class AuthMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Determinar si es web o móvil basado en el ancho
+    bool isWeb = screenWidth > 500; 
+
+    double buttonWidth = isWeb ? 500 : double.infinity;
     return Scaffold(
       body: Stack(children: [
         const RiveAnimation.asset("assets/shapes.riv"),
@@ -44,7 +50,7 @@ class AuthMenu extends StatelessWidget {
                     ),
                     FadeInLeft(
                       child: Text(
-                        'Bienvenido a OFIMEX, la app que te ayudara a encontrar los mejores servicios',
+                        'Bienvenido a OFIMEX Web, la app que te ayudara a encontrar los mejores servicios',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.grey[700],
@@ -66,7 +72,7 @@ class AuthMenu extends StatelessWidget {
                   children: <Widget>[
                     FadeInRight(
                       child: MaterialButton(
-                        minWidth: double.infinity,
+                        minWidth: buttonWidth,
                         height: 60,
                         onPressed: () {
                           Navigator.of(context).pushNamed("/login");
@@ -88,7 +94,7 @@ class AuthMenu extends StatelessWidget {
                     ),
                     FadeInLeft(
                       child: MaterialButton(
-                        minWidth: double.infinity,
+                        minWidth: buttonWidth,
                         height: 60,
                         onPressed: () {
                           Navigator.of(context).pushNamed("/signUp");

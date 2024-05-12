@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:ofimex/models/recommended_services_model.dart';
-import 'package:ofimex/pages/prueba/page3.dart';
+import 'package:ofimex/models/trabajador_list_data.dart';
+
 
 class RecommendedServicos extends StatelessWidget {
-  const RecommendedServicos({Key? key}) : super(key: key);
+  bool? isWeb;
+  RecommendedServicos({Key? key, this.isWeb = false}) : super(key: key);
+  List<TrabjadorListData> listTrabajador = TrabjadorListData.listTrabajador;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +28,15 @@ class RecommendedServicos extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TouristDetailsPage(
-                            image: trabajador[index].image,
-                          ),
-                        ));
+
+                    if(isWeb! == true){
+
+                    Navigator.pushNamed(context,"/datailTrabajadorWeb",arguments: listTrabajador[index]); 
+                    }else{
+                    Navigator.pushNamed(context,"/datailTrabajadorMobile",arguments: listTrabajador[index]); 
+                    }
+                    
+                    
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -41,7 +45,7 @@ class RecommendedServicos extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
-                            trabajador[index].image,
+                            listTrabajador[index].imagePath,
                             width: double.maxFinite,
                             fit: BoxFit.cover,
                             height: 150,
@@ -51,7 +55,7 @@ class RecommendedServicos extends StatelessWidget {
                         Row(
                           children: [
                              Text(
-                              trabajador[index].name,
+                              listTrabajador[index].titleTxt,
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -64,7 +68,7 @@ class RecommendedServicos extends StatelessWidget {
                               size: 14,
                             ),
                              Text(
-                              "${trabajador[index].rating}",
+                              "${listTrabajador[index].rating}",
                               style: const TextStyle(
                                 fontSize: 12,
                               ),
@@ -81,7 +85,7 @@ class RecommendedServicos extends StatelessWidget {
                             ),
                             const SizedBox(width: 5),
                              Text(
-                              trabajador[index].location,
+                              listTrabajador[index].subTxt,
                               style: const TextStyle(
                                 fontSize: 12,
                               ),
@@ -98,7 +102,7 @@ class RecommendedServicos extends StatelessWidget {
           separatorBuilder: (context, index) => const Padding(
                 padding: EdgeInsets.only(right: 10),
               ),
-          itemCount: trabajador.length),
+          itemCount: listTrabajador.length),
     );
   }
 }

@@ -5,7 +5,7 @@ class InputTexFormtField extends StatefulWidget {
   final bool? obscureText;
   final bool? esPwd;
   final TextEditingController textController;
-  final IconData icon;
+  final IconData? icon;
   final TextInputType inputType;
 
   const InputTexFormtField({
@@ -14,7 +14,7 @@ class InputTexFormtField extends StatefulWidget {
     this.obscureText = false,
     this.esPwd = false,
     required this.textController,
-    required this.icon,
+    this.icon,
     required this.inputType,
   }) : super(key: key);
 
@@ -29,7 +29,7 @@ class _InputTexFormtFieldState extends State<InputTexFormtField> {
   @override
   void initState() {
     super.initState();
-    _obscureText = widget.obscureText!;
+    _obscureText = widget.obscureText ?? false; // Inicializamos con el valor proporcionado, o falso si no se proporciona
     _iconPwd = Icons.visibility;
   }
 
@@ -38,35 +38,24 @@ class _InputTexFormtFieldState extends State<InputTexFormtField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   widget.label,
-        //   style: const TextStyle(
-        //     fontSize: 15,
-        //     fontWeight: FontWeight.w400,
-        //     color: Colors.black87,
-        //   ),
-        // ),
-        // const SizedBox(height: 5),
         TextFormField(
           controller: widget.textController,
           keyboardType: widget.inputType,
-          obscureText: _obscureText,
+          obscureText: _obscureText, // Usamos la variable local _obscureText
           decoration: InputDecoration(
             hintText: widget.label,
             suffixIcon: widget.esPwd!
                 ? IconButton(
                     onPressed: () {
                       setState(() {
-                        _obscureText = !_obscureText;
-                        _iconPwd = _obscureText
-                            ? Icons.visibility
-                            : Icons.visibility_off;
+                        _obscureText = !_obscureText; // Cambiamos el valor de _obscureText
+                        _iconPwd = _obscureText ? Icons.visibility : Icons.visibility_off;
                       });
                     },
                     icon: Icon(_iconPwd),
                   )
                 : null,
-            prefixIcon:  Icon(widget.icon) ,
+            prefixIcon: Icon(widget.icon),
             contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 15),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),

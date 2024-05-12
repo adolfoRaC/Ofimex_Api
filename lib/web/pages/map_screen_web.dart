@@ -6,14 +6,14 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ofimex/theme/theme.dart';
 
-class MapScreenPruebas extends StatefulWidget {
-  const MapScreenPruebas({super.key});
+class MapScreenWeb extends StatefulWidget {
+  const MapScreenWeb({super.key});
 
   @override
-  State<MapScreenPruebas> createState() => _MapScreenState();
+  State<MapScreenWeb> createState() => _MapScreenWebState();
 }
 
-class _MapScreenState extends State<MapScreenPruebas> {
+class _MapScreenWebState extends State<MapScreenWeb> {
   LatLng? myPosition;
   bool _isLoading = true;
   String? _errorMessage;

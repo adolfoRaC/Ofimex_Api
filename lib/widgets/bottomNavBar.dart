@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ofimex/pages/profile/profile_screen.dart';
-import 'package:ofimex/pages/home.dart';
+import 'package:ofimex/home.dart';
 import 'package:ofimex/pages/services/select_service.dart';
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -17,7 +17,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
     // Prueba1(),
     // HomeServicesPage(),
     HomePage(),
-    SelectService(),
     ProfileScreen(),
 
   ];
@@ -31,9 +30,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
           _currentIndex = newIndex;
         });
       },items: const [
-        BottomNavigationBarItem(icon: Icon(Ionicons.home_outline), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Ionicons.menu),label: "Menu"),
-        BottomNavigationBarItem(icon: Icon(Ionicons.person_outline),label: "Profile"),
+        BottomNavigationBarItem(icon: Icon(Ionicons.home_outline), label: "Inicio"),
+
+        BottomNavigationBarItem(icon: Icon(Ionicons.person_outline),label: "Perfil"),
 
         ],),
       

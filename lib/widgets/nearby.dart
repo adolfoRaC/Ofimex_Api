@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ofimex/models/recommended_services_model.dart';
 import 'package:ofimex/pages/prueba/page3.dart';
-import 'package:ofimex/pages/services/DetailServicio.dart';
+import 'package:ofimex/mobile/pages/DetailTrabajadorMobile.dart';
 import 'package:ofimex/widgets/NoFuncionales/distance.dart';
 
 class Nearby extends StatelessWidget {

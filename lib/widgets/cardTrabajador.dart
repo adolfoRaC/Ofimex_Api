@@ -8,14 +8,14 @@ import 'package:ofimex/theme/theme.dart';
 class TrabajadorListView extends StatelessWidget {
   const TrabajadorListView({
     Key? key,
-    this.hotelData,
+    this.trabajadorData,
     this.animationController,
     this.animation,
     this.callback,
   }) : super(key: key);
 
   final VoidCallback? callback;
-  final TrabjadorListData? hotelData;
+  final TrabjadorListData? trabajadorData;
   final AnimationController? animationController;
   final Animation<double>? animation;
 
@@ -67,7 +67,7 @@ class TrabajadorListView extends StatelessWidget {
                     AspectRatio(
                       aspectRatio: 2,
                       child: Image.asset(
-                        hotelData!.imagePath,
+                        trabajadorData!.imagePath,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -89,7 +89,7 @@ class TrabajadorListView extends StatelessWidget {
                                       CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      hotelData!.titleTxt,
+                                      trabajadorData!.titleTxt,
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
@@ -103,7 +103,7 @@ class TrabajadorListView extends StatelessWidget {
                                           MainAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          hotelData!.subTxt,
+                                          trabajadorData!.subTxt,
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.grey.withOpacity(0.8),
@@ -120,11 +120,11 @@ class TrabajadorListView extends StatelessWidget {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            '${hotelData!.dist.toStringAsFixed(1)} km to city',
+                                            trabajadorData!.servicio,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: Colors.grey.withOpacity(0.8),
+                                              color: AppTheme().theme().primaryColor.withOpacity(0.8),
                                             ),
                                           ),
                                         ),
@@ -135,7 +135,7 @@ class TrabajadorListView extends StatelessWidget {
                                       child: Row(
                                         children: <Widget>[
                                           RatingBar(
-                                            initialRating: hotelData!.rating,
+                                            initialRating: trabajadorData!.rating,
                                             direction: Axis.horizontal,
                                             allowHalfRating: true,
                                             ignoreGestures: true,
@@ -161,7 +161,7 @@ class TrabajadorListView extends StatelessWidget {
                                             },
                                           ),
                                           Text(
-                                            ' ${hotelData!.reviews} Reviews',
+                                            ' ${trabajadorData!.reviews} Reseñas',
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: Colors.grey.withOpacity(0.8),
@@ -175,30 +175,7 @@ class TrabajadorListView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16, top: 8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Text(
-                                  '\$${hotelData!.perNight}',
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                Text(
-                                  '/per night',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.withOpacity(0.8),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          
                         ],
                       ),
                     ),
@@ -215,7 +192,6 @@ class TrabajadorListView extends StatelessWidget {
                         Radius.circular(32.0),
                       ),
                       onTap: () {
-                        // Handle favorite button tap
                       },
                       child: Padding(
                         padding: EdgeInsets.all(8.0),

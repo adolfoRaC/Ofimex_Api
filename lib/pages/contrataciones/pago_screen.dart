@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
 import 'package:ofimex/models/trabajador_list_data.dart';
 import 'package:ofimex/theme/theme.dart';
-import 'package:ofimex/widgets/cardServices.dart';
+import 'package:ofimex/widgets/cardTrabajador.dart';
 import 'package:http/http.dart' as http;
 
 class PagoScreen extends StatefulWidget {
@@ -38,6 +36,10 @@ class _PagoScreenState extends State<PagoScreen>
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isWeb = screenWidth > 500; 
+    double resposiveWidth = isWeb ? 500 : double.infinity;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pago"),
@@ -46,14 +48,16 @@ class _PagoScreenState extends State<PagoScreen>
         child: Column(
           children: [
             SizedBox(
+              height: isWeb ? 400 : 0,
+              width: isWeb ? 600: 0,
               child: TrabajadorListView(
                 callback: () {},
-                hotelData: listTrabajador[1],
+                trabajadorData: listTrabajador[1],
                 animationController: animationController,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: isWeb ? const EdgeInsets.symmetric(horizontal: 400): const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: Colors.grey.shade400),
@@ -63,35 +67,35 @@ class _PagoScreenState extends State<PagoScreen>
                 child: Column(children: [
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text("SubTotal"), Text("\$200.00")],
+                    children: [Text("SubTotal:"), Text("\$200.00")],
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text("Otros agregados"), Text("\$50.00")],
+                    children: [Text("Otros agregados:"), Text("\$50.00")],
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text("Total"), Text("\$250.00")],
+                    children: [Text("Total:"), Text("\$250.00")],
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text("Tiempo de contratación"), Text("2 horas")],
+                    children: [Text("Tiempo de contratación:"), Text("2 horas")],
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text("Fecha"), Text("12/09/2024")],
+                    children: [Text("Fecha:"), Text("12/09/2024")],
                   ),
                   const Divider(),
                   const SizedBox(
@@ -156,17 +160,20 @@ class _PagoScreenState extends State<PagoScreen>
                 ]),
               ),
             ),
+            const SizedBox(
+                    height: 10,
+                  ),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          padding:  EdgeInsets.symmetric(horizontal: isWeb ? 390 : 15, vertical: 5),
           child: MaterialButton(
             onPressed: () async {
 
               // makePayment();
               // print("Presionado");
-              Navigator.of(context).pushNamed("/review");
+              // Navigator.of(context).pushNamed("/review");
             },
             child: Container(
               width: double.infinity,

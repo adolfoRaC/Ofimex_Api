@@ -50,6 +50,9 @@ dependencies:
   geolocator: ^8.0.0
   geocoding: ^3.0.0
   geocode: ^1.0.3
+  url_strategy: ^0.2.0
+  text_area: ^0.0.3
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +83,7 @@ flutter:
     - assets/servicios/icons/
     - assets/fotoTrabajador/
     - assets/hotel/
+    - assets/evidencia/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
