@@ -110,7 +110,9 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.logout,
                   textColor: Colors.red,
                   endIcon: false,
-                  onPress: () {},
+                  onPress: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil("/", (route) => false);
+                  },
                 ),
               ],
             ),

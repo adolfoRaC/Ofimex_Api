@@ -1,9 +1,15 @@
 import 'dart:io';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ofimex/models/usuario/oficio.dart';
+import 'package:ofimex/models/usuario/oficoTrabajo.dart';
+import 'package:ofimex/models/usuario/responseAuth.dart';
+import 'package:ofimex/models/usuario/trabajador.dart';
 import 'package:ofimex/provider/globales.dart';
+import 'package:ofimex/services/services.dart';
 import 'package:ofimex/theme/theme.dart';
 import 'package:ofimex/widgets/InputTextFoemField.dart';
 import 'package:provider/provider.dart';
@@ -16,24 +22,42 @@ class RegistrarTrabajador extends StatefulWidget {
 }
 
 class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
+  late Future<List<Oficio>> _oficio;
+  late List<OficioTrabajo> _oficiosSeleccionados = [];
+  late Map<int, bool> _selectedOficios = {};
+  @override
+  void initState() {
+    super.initState();
+    _oficio = getOficios();
+  }
+
   final txtNombreController = TextEditingController();
   final txtApellidoPaternoController = TextEditingController();
   final txtApellidoMaternoController = TextEditingController();
   final txtEdadController = TextEditingController();
   final txtExperienciaController = TextEditingController();
-  bool showSignUp = true;
+  bool showForm = false;
+  bool _checked = false;
 
+  int? idUsuario = 0;
+  String nombre = "";
+  String apePat = "";
+  String apeMat = "";
   // File? imagen;
   @override
   Widget build(BuildContext context) {
     final globales = context.watch<Globales>();
+    idUsuario = globales.usuario.id;
+    nombre = globales.usuario.nombre;
+    apePat = globales.usuario.apePat;
+    apeMat = globales.usuario.apeMat;
     double screenWidth = MediaQuery.of(context).size.width;
 
     bool isWeb = screenWidth > 500;
     txtNombreController.text = globales.usuario.nombre;
     txtApellidoPaternoController.text = globales.usuario.apePat;
     txtApellidoMaternoController.text = globales.usuario.apeMat;
-    txtEdadController.text = "23";
+    // txtEdadController.text = "23";
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -42,47 +66,7 @@ class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: SizedBox(
-          width: isWeb ? 500:double.infinity,
-
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // imagen == null
-                //     ? const SizedBox(
-                //         height: 200,
-                //       )
-                //     : const SizedBox(),
-                // imagen == null
-                //     ? const Text(
-                //         "Ingrese una foto de su credencial",
-                //         style: TextStyle(fontSize: 20),
-                //       )
-                //     : const SizedBox(),
-                // imagen == null
-                //     ? SizedBox(
-                //         width: 200,
-                //         height: 60,
-                //         child: ElevatedButton(
-                //           onPressed: () {
-                //             SeleccionarImagenGaleria();
-                //           },
-                //           style: ElevatedButton.styleFrom(
-                //             backgroundColor: AppTheme().theme().primaryColor,
-                //             shape: const StadiumBorder(),
-                //           ),
-                //           child: const Text("Editar perfil",
-                //               style: TextStyle(color: Colors.white)),
-                //         ),
-                //       )
-                //     : form(),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: SingleChildScrollView(child: showForm ? formOficios() : form()),
     );
   }
 
@@ -94,7 +78,8 @@ class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
   //   });
   // }
 
-  mostrarDialogo(BuildContext context, String mensaje) {
+  mostrarDialogo(
+      BuildContext context, String mensaje, IconData icon, Color color) {
     SmartDialog.show(builder: (_) {
       return Container(
         height: 200,
@@ -106,21 +91,21 @@ class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                child: Text(
-                  mensaje,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-
-                    
-                  ),
-                ),
+            Text(
+              mensaje,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const Center(child: Icon(Icons.check,color: Colors.green,size: 60,),)
+            const SizedBox(height: 30),
+            Center(
+              child: Icon(
+                icon,
+                color: color,
+                size: 60,
+              ),
+            )
           ],
         ),
       );
@@ -150,6 +135,7 @@ class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
               label: "Nombre",
               textController: txtNombreController,
               inputType: TextInputType.emailAddress,
+              icon: Icons.person,
             ),
             InputTexFormtField(
               label: "Apellido paterno",
@@ -164,36 +150,202 @@ class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
             InputTexFormtField(
               label: "Edad",
               textController: txtEdadController,
-              inputType: TextInputType.text,
+              inputType: TextInputType.number,
+              icon: Icons.onetwothree,
             ),
             InputTexFormtField(
-              label: "Años de experiencia",
-              textController: txtExperienciaController,
-              inputType: TextInputType.number,
-            ),
+                label: "Años de experiencia",
+                textController: txtExperienciaController,
+                inputType: TextInputType.number,
+                icon: Icons.line_axis_sharp),
             SizedBox(
               width: 400,
               height: 60,
               child: ElevatedButton(
                 onPressed: () async {
-                  SmartDialog.showLoading(msg: "Cargando...");
-                  await Future.delayed(const Duration(seconds: 2));
-                  SmartDialog.dismiss();
-                  // ignore: use_build_context_synchronously
-                  mostrarDialogo(context, "Felicidades tu registro se ha realizado con éxito");
-                  await Future.delayed(const Duration(seconds: 2));
-                  Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+                  if (txtNombreController.text.isNotEmpty &&
+                      txtApellidoPaternoController.text.isNotEmpty &&
+                      txtApellidoMaternoController.text.isNotEmpty &&
+                      txtEdadController.text.isNotEmpty &&
+                      txtExperienciaController.text.isNotEmpty) {
+                    setState(() {
+                      showForm = !showForm;
+                    });
+                    SmartDialog.showLoading(msg: "Cargando...");
+                    await Future.delayed(const Duration(seconds: 1));
+                    SmartDialog.dismiss();
+                  } else {
+                    mostrarDialogo(
+                        context,
+                        "Llena todo los campos para avanzar",
+                        Icons.cancel_outlined,
+                        Colors.red);
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme().theme().primaryColor,
                   shape: const StadiumBorder(),
                 ),
-                child: const Text("Finalizar registro",
+                child: const Text("Siguiente",
                     style: TextStyle(color: Colors.white)),
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget formOficios() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          const SizedBox(
+            height: 60,
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Text(
+              "Selecciona los oficios",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          // Verifica que los widgets hijos estén configurados correctamente
+          FutureBuilder<List<Oficio>>(
+            future: _oficio,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Oficio>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return ListView.builder(
+                  shrinkWrap:
+                      true, // Añadido para evitar problemas de desplazamiento
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final oficio = snapshot.data![index];
+                    final isSelected = _selectedOficios[oficio.id] ??
+                        false; // Paso 3: Obtener el estado del checkbox
+                    return CheckboxListTile(
+                      title: Text(oficio.nombre),
+                      value: isSelected,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _selectedOficios[oficio.id] = value ??
+                              false; // Paso 2: Actualizar el estado del checkbox
+                          if (value != null && value) {
+                            _oficiosSeleccionados.add(OficioTrabajo(
+                              idOficio: oficio.id,
+                              idUsuario: idUsuario!,
+                            ));
+                          } else {
+                            _oficiosSeleccionados.removeWhere(
+                                (element) => element.idOficio == oficio.id);
+                          }
+                        });
+                      },
+                    );
+                  },
+                );
+              } else {
+                return const Center(
+                  child: Text("No hay oficios"),
+                );
+              }
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: 400,
+            height: 60,
+            child: ElevatedButton(
+              onPressed: () async {
+                if (_oficiosSeleccionados.length > 0) {
+                  final trabajador = Trabajador(
+                      edad: int.parse(txtEdadController.text),
+                      experiencia: int.parse(txtExperienciaController.text),
+                      idUsuario: idUsuario!);
+                  SmartDialog.showLoading(msg: "Registrando trabajador...");
+                  final ResponseAuth responseRegistrabajdor =
+                      await registrarTrabajador(
+                          trabajador, idUsuario!, nombre, apePat, apeMat);
+                  if (responseRegistrabajdor.codigo == 200) {
+                    // final ofi = OficioTrabajo( idUsuario: idUsuario!,idOficio: 1,);
+                    final responseOficioTrabajador =
+                        await registrarOficioTrabajador(_oficiosSeleccionados);
+
+                    if (responseOficioTrabajador.codigo == 200) {
+                      SmartDialog.dismiss();
+                      // ignore: use_build_context_synchronously
+                      mostrarDialogo(context, responseOficioTrabajador.mensaje,
+                          Icons.check, Colors.green);
+                      await Future.delayed(const Duration(seconds: 2));
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil("/home", (route) => false);
+                    } else {
+                      SmartDialog.dismiss();
+
+                      // ignore: use_build_context_synchronously
+                      mostrarDialogo(context, responseOficioTrabajador.mensaje,
+                          Icons.cancel_outlined, Colors.red);
+                    }
+                  } else {
+                    SmartDialog.dismiss();
+
+                    mostrarDialogo(context, responseRegistrabajdor.mensaje,
+                        Icons.cancel, Colors.red);
+                  }
+                }
+
+                // Imprimir los oficios seleccionados
+                // print('Oficios seleccionados:');
+                // for (var oficio in _oficiosSeleccionados) {
+                //   print(
+                //       'ID: ${oficio.idOficio}, ID Usuario: ${oficio.idUsuario}');
+                // }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme().theme().primaryColor,
+                shape: const StadiumBorder(),
+              ),
+              child: const Text("Finalizar registro",
+                  style: TextStyle(color: Colors.white)),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: 400,
+            height: 60,
+            child: ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  showForm = false;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: const StadiumBorder(),
+              ),
+              child:
+                  const Text("Regresar", style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
       ),
     );
   }

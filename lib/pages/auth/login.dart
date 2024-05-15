@@ -84,10 +84,10 @@ class LoginPage extends StatelessWidget {
                           FadeInUp(
                               child: InputTexFormtField(
                                 
-                            label: "Correo",
+                            label: "Usuario",
                             textController: txtCorreoController,
-                            inputType: TextInputType.emailAddress,
-                            icon: Icons.email,
+                            inputType: TextInputType.text,
+                            icon: Icons.person,
                           )),
                           FadeInUp(
                               child: InputTexFormtField(
@@ -127,7 +127,7 @@ class LoginPage extends StatelessWidget {
                                             const WelcomePage()));
                               } else {
                                // ignore: use_build_context_synchronously
-                               mostrarDialogo(context, "Usuario y/o contraseña no encontrado", Icons.cancel_outlined, Colors.red);
+                               mostrarDialogo(context, response.mensaje, Icons.cancel_outlined, Colors.red);
                               }
                             }
                             SmartDialog.dismiss();

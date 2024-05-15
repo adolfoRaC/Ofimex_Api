@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:ofimex/services/services.dart';
 import 'package:ofimex/theme/hotel_app_theme.dart';
 import 'package:ofimex/widgets/InputTextFoemField.dart';
 import 'package:ofimex/widgets/ServicioTypeMenu.dart';
@@ -109,18 +110,22 @@ Future<bool> getData() async {
             ),
           ],
         ),
-        actions: const [
+        actions:  [
           Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 12),
+            padding: const EdgeInsets.only(left: 8.0, right: 12),
             child: CustomIconButton(
-              icon: Icon(Icons.history),
-              
+              icon: const Icon(Icons.history),
+              callback: ()async{
+                await getTrabajadores();
+              },
+
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 12),
+            padding: const EdgeInsets.only(left: 8.0, right: 12),
             child: CustomIconButton(
-              icon: Icon(Ionicons.notifications_outline),
+              icon: const Icon(Ionicons.notifications_outline),
+              callback: (){},
             ),
           ),
         ],

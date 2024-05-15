@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatelessWidget {
   const CustomIconButton({
     Key? key,
-    required this.icon,
+    required this.icon, this.callback,
   }) : super(key: key);
   final Widget icon;
-  
+  final VoidCallback? callback;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,9 +17,7 @@ class CustomIconButton extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed("/historial");
-        },
+        onPressed: callback,
         constraints: const BoxConstraints.tightFor(width: 40),
         color: Colors.black54,
         icon: icon,

@@ -4,7 +4,7 @@ class Trabajador {
  int experiencia;
  int? trabajos;
  bool? disponible;
- DateTime? membresia;
+ String? membresia;
  int idUsuario;
 
   Trabajador({

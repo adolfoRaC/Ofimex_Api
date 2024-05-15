@@ -35,7 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
       isMaleSelected = value ?? false;
       if (isMaleSelected) {
         isFemaleSelected = false;
-        gender = "Hombre";
+        gender = "Masculino";
       }
     });
   }
@@ -45,7 +45,7 @@ class _SignUpPageState extends State<SignUpPage> {
       isFemaleSelected = value ?? false;
       if (isFemaleSelected) {
         isMaleSelected = false;
-        gender = "Mujer";
+        gender = "Femenino";
       }
     });
   }
@@ -170,8 +170,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             onPressed: () async {
                               if (nombre.isNotEmpty &&
                                       usuario.isNotEmpty &&
-                                      isMaleSelected == true ||
-                                  isMaleSelected == true) {
+                                      gender.isNotEmpty
+                                      ) {
                                 List<String> nombreDestructurado =
                                     nombre.trim().split(' ');
                                 // Obtener nombre y apellidos
@@ -210,7 +210,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   correo: correo,
                                   usuario: usuario,
                                   pwd: pwd,
-                                  idRol: 1,
+                                  idRol: 2,
                                 );
                                 SmartDialog.showLoading(
                                     msg: "Registrando usuario...");
