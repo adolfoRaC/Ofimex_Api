@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ofimex/models/servicioIconTypeModel.dart';
 
 class ServicioTypeMenu extends StatefulWidget {
-
+final Function(String) onItemSelected;
   const ServicioTypeMenu({
-    Key? key,
+    Key? key, required this.onItemSelected,
   }) : super(key: key);
 
   @override
@@ -19,7 +19,12 @@ class _ServicioTypeMenuState extends State<ServicioTypeMenu> {
       }
       typeServices[index].isSelected = true;
     });
+     final selectedService = typeServices[index].name;
+    // Llamar al callback para pasar el valor seleccionado de regreso a HomePageMobile
+    widget.onItemSelected(selectedService);
   }
+
+  
   @override
   Widget build(BuildContext context) {
     return SizedBox(

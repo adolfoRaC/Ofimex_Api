@@ -15,6 +15,7 @@ import 'package:ofimex/pages/profile/profile_screen.dart';
 import 'package:ofimex/pages/profile/registroTrabajador.dart';
 import 'package:ofimex/pages/profile/updateProfile.dart';
 import 'package:ofimex/mobile/pages/DetailTrabajadorMobile.dart';
+import 'package:ofimex/pages/prueba/prueba1.dart';
 import 'package:ofimex/pages/services/review_screem.dart';
 import 'package:ofimex/pages/welcome.dart';
 import 'package:ofimex/provider/globales.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const AuthMenu(),
         '/login': (context) => LoginPage(),
-        '/signUp': (context) => SignUpPage(),
+        '/signUp': (context) => const SignUpPage(),
         '/welcome': (context) => const WelcomePage(),
         '/inicio': (context) => const HomePage(),
         '/profileConfig': (context) => const ProfileScreen(),
@@ -56,14 +57,14 @@ class MyApp extends StatelessWidget {
         '/datailTrabajadorMobile': (context) =>  const DetailTrabajadorMobile(),
         '/datailTrabajadorWeb': (context) =>  const DetailTrabajadorWeb(),
         '/detailProfile': (context) => const DetailProfile(),
-        '/pago': (context)=> const PagoScreen(),
+        // '/pago': (context)=> const PagoScreen(),
         '/review': (context)=> const ReviewScreen(),
         '/map': (context) => const MapScreen(),
         '/mapPruena': (context) => const MapScreenPruebas(),
         '/mapWeb': (context)=> const MapScreenWeb(),
         '/registroTrabajador': (context)=> const RegistrarTrabajador(),
         '/historial': (context)=> const HistorialContratacionesPage(),
-
+        '/p':(context) => const Prueba1()
 
       },
       initialRoute: '/',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ofimex/models/usuario/getTrabajos.dart';
 import 'package:ofimex/models/usuario/trabajo.dart';
 import 'package:ofimex/provider/globales.dart';
 import 'package:ofimex/services/services.dart';
@@ -7,27 +6,19 @@ import 'package:ofimex/widgets/cardHistorial.dart';
 import 'package:ofimex/widgets/menuStatus.dart';
 import 'package:provider/provider.dart';
 
-class HistorialContratacionesPage extends StatefulWidget {
-  const HistorialContratacionesPage({super.key});
+class HistorialTrabajador extends StatefulWidget {
+  const HistorialTrabajador({super.key});
 
   @override
-  State<HistorialContratacionesPage> createState() =>
-      _HistorialContratacionesPageState();
+  State<HistorialTrabajador> createState() => _HistorialTrabajadorState();
 }
 
-class _HistorialContratacionesPageState
-    extends State<HistorialContratacionesPage> {
+class _HistorialTrabajadorState extends State<HistorialTrabajador> {
   @override
   Widget build(BuildContext context) {
     final globales = context.watch<Globales>();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Trabajos",
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
+
+    return SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Padding(
@@ -81,7 +72,6 @@ class _HistorialContratacionesPageState
             MenuStatus(text: "Cancelado", callback: () {}),
           ],
         ),
-      ),
     );
   }
 }

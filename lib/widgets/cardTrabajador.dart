@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ofimex/models/trabajador_list_data.dart';
+
+import 'package:ofimex/models/usuario/trabajador.dart';
+
 import 'package:ofimex/theme/hotel_app_theme.dart';
 import 'package:ofimex/theme/theme.dart';
 
@@ -15,7 +16,7 @@ class TrabajadorListView extends StatelessWidget {
   }) : super(key: key);
 
   final VoidCallback? callback;
-  final TrabjadorListData? trabajadorData;
+  final Trabajador? trabajadorData;
   final AnimationController? animationController;
   final Animation<double>? animation;
 
@@ -67,7 +68,7 @@ class TrabajadorListView extends StatelessWidget {
                     AspectRatio(
                       aspectRatio: 2,
                       child: Image.asset(
-                        trabajadorData!.imagePath,
+                        "assets/person.png",
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -78,104 +79,140 @@ class TrabajadorListView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Expanded(
-                            child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16, top: 8, bottom: 8),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      trabajadorData!.titleTxt,
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 22,
-                                      ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, top: 8, bottom: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    "${trabajadorData!.usuario!.nombre} ${trabajadorData!.usuario!.apePat} ${trabajadorData!.usuario!.apeMat} ",
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 22,
                                     ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.work,
+                                        size: 12,
+                                        color: AppTheme().theme().primaryColor,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: SizedBox(
+                                          height:
+                                              24, // Establecer una altura específica para el ListView
+                                          child: ListView.builder(
+                                            scrollDirection: Axis
+                                                .horizontal, // Establecer dirección horizontal
+                                            itemCount: trabajadorData!
+                                                .usuario!.oficio!.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right:
+                                                        8.0), // Espaciado entre elementos
+                                                child: Text(
+                                                  "${trabajadorData!.usuario!.oficio![index].oficio!.nombre}",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: AppTheme()
+                                                        .theme()
+                                                        .primaryColor
+                                                        .withOpacity(0.8),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.workspace_premium_outlined,
+                                        size: 12,
+                                        color: AppTheme().theme().primaryColor,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "${trabajadorData!.experiencia} años de experiencia",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey.withOpacity(0.8),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 4,
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Row(
                                       children: <Widget>[
+                                        RatingBar(
+                                          initialRating: 5,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          ignoreGestures: true,
+                                          itemCount: 5,
+                                          itemSize: 24,
+                                          ratingWidget: RatingWidget(
+                                            full: Icon(
+                                              Icons.star_rate_rounded,
+                                              color: AppTheme()
+                                                  .theme()
+                                                  .primaryColor,
+                                            ),
+                                            half: Icon(
+                                              Icons.star_half_rounded,
+                                              color: AppTheme()
+                                                  .theme()
+                                                  .primaryColor,
+                                            ),
+                                            empty: Icon(
+                                              Icons.star_border_rounded,
+                                              color: AppTheme()
+                                                  .theme()
+                                                  .primaryColor,
+                                            ),
+                                          ),
+                                          itemPadding: EdgeInsets.zero,
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
                                         Text(
-                                          trabajadorData!.subTxt,
+                                          '0 Reseñas',
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.grey.withOpacity(0.8),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                        Icon(
-                                          FontAwesomeIcons.locationDot,
-                                          size: 12,
-                                          color: HotelAppTheme.buildLightTheme()
-                                              .primaryColor,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            trabajadorData!.servicio,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppTheme().theme().primaryColor.withOpacity(0.8),
-                                            ),
-                                          ),
-                                        ),
                                       ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Row(
-                                        children: <Widget>[
-                                          RatingBar(
-                                            initialRating: trabajadorData!.rating,
-                                            direction: Axis.horizontal,
-                                            allowHalfRating: true,
-                                            ignoreGestures: true,
-                                            itemCount: 5,
-                                            itemSize: 24,
-                                            ratingWidget: RatingWidget(
-                                              full: Icon(
-                                                Icons.star_rate_rounded,
-                                                color: AppTheme().theme().primaryColor,
-                                              ),
-                                              half: Icon(
-                                                Icons.star_half_rounded,
-                                                color: AppTheme().theme().primaryColor,
-                                              ),
-                                              empty: Icon(
-                                                Icons.star_border_rounded,
-                                                color: AppTheme().theme().primaryColor,
-                                              ),
-                                            ),
-                                            itemPadding: EdgeInsets.zero,
-                                            onRatingUpdate: (rating) {
-                                              print(rating);
-                                            },
-                                          ),
-                                          Text(
-                                            ' ${trabajadorData!.reviews} Reseñas',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey.withOpacity(0.8),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          
                         ],
                       ),
                     ),
@@ -191,8 +228,7 @@ class TrabajadorListView extends StatelessWidget {
                       borderRadius: const BorderRadius.all(
                         Radius.circular(32.0),
                       ),
-                      onTap: () {
-                      },
+                      onTap: () {},
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Icon(

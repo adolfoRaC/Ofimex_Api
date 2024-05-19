@@ -19,6 +19,7 @@ class _HomePageWebState extends State<HomePageWeb>
     with TickerProviderStateMixin<HomePageWeb> {
   final TextEditingController txtSearchController = TextEditingController();
   late AnimationController animationController;
+  String? selectedService;
   List<TrabjadorListData> listTrabajador = TrabjadorListData.listTrabajador;
 
   @override
@@ -42,62 +43,62 @@ class _HomePageWebState extends State<HomePageWeb>
     return true;
   }
 
-  Widget getListUI() {
-    return FutureBuilder<bool>(
-      future: getData(),
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          // Obtener el ancho de la pantalla
-          double screenWidth = MediaQuery.of(context).size.width;
+  // Widget getListUI() {
+  //   return FutureBuilder<bool>(
+  //     future: getData(),
+  //     builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+  //       if (!snapshot.hasData) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       } else {
+  //         // Obtener el ancho de la pantalla
+  //         double screenWidth = MediaQuery.of(context).size.width;
 
-          // Definir el número de columnas según el ancho de la pantalla
-          int crossAxisCount = 3; // Valor por defecto
-          if (screenWidth < 800) {
-            crossAxisCount = 2; // Pantallas pequeñas
-          } else if (screenWidth < 1000) {
-            crossAxisCount = 3; // Pantallas medianas
-          }
+  //         // Definir el número de columnas según el ancho de la pantalla
+  //         int crossAxisCount = 3; // Valor por defecto
+  //         if (screenWidth < 800) {
+  //           crossAxisCount = 2; // Pantallas pequeñas
+  //         } else if (screenWidth < 1000) {
+  //           crossAxisCount = 3; // Pantallas medianas
+  //         }
 
-          return GridView.builder(
-            shrinkWrap:
-                true, // Asegura que el GridView tenga el tamaño adecuado
-            itemCount: listTrabajador.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount, // Número de columnas adaptativo
-              crossAxisSpacing: 3, // Espaciado horizontal entre columnas
-              mainAxisSpacing: 3, // Espaciado vertical entre filas
-              childAspectRatio: 1.38, // Proporción entre ancho y alto
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              final int count =
-                  listTrabajador.length > 10 ? 10 : listTrabajador.length;
-              final Animation<double> animation =
-                  Tween<double>(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: animationController,
-                  curve: Interval((1 / count) * index, 1.0,
-                      curve: Curves.fastOutSlowIn),
-                ),
-              );
-              animationController.forward();
+  //         return GridView.builder(
+  //           shrinkWrap:
+  //               true, // Asegura que el GridView tenga el tamaño adecuado
+  //           itemCount: listTrabajador.length,
+  //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //             crossAxisCount: crossAxisCount, // Número de columnas adaptativo
+  //             crossAxisSpacing: 3, // Espaciado horizontal entre columnas
+  //             mainAxisSpacing: 3, // Espaciado vertical entre filas
+  //             childAspectRatio: 1.38, // Proporción entre ancho y alto
+  //           ),
+  //           itemBuilder: (BuildContext context, int index) {
+  //             final int count =
+  //                 listTrabajador.length > 10 ? 10 : listTrabajador.length;
+  //             final Animation<double> animation =
+  //                 Tween<double>(begin: 0.0, end: 1.0).animate(
+  //               CurvedAnimation(
+  //                 parent: animationController,
+  //                 curve: Interval((1 / count) * index, 1.0,
+  //                     curve: Curves.fastOutSlowIn),
+  //               ),
+  //             );
+  //             animationController.forward();
 
-              return TrabajadorListView(
-                callback: () {
-                  Navigator.pushNamed(context, "/datailTrabajadorWeb",
-                      arguments: listTrabajador[index]);
-                },
-                trabajadorData: listTrabajador[index],
-                animation: animation,
-                animationController: animationController,
-              );
-            },
-          );
-        }
-      },
-    );
-  }
+  //             return TrabajadorListView(
+  //               callback: () {
+  //                 Navigator.pushNamed(context, "/datailTrabajadorWeb",
+  //                     arguments: listTrabajador[index]);
+  //               },
+  //               trabajadorData: listTrabajador[index],
+  //               animation: animation,
+  //               animationController: animationController,
+  //             );
+  //           },
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +155,14 @@ class _HomePageWebState extends State<HomePageWeb>
           const SizedBox(
             height: 15,
           ),
-          ServicioTypeMenu(),
+         ServicioTypeMenu(
+            onItemSelected: (value) {
+              setState(() {
+                selectedService = value;
+                print(selectedService);
+              });
+            },
+          ),
           // CATEGORIES
           const SizedBox(height: 10),
           Row(
@@ -190,7 +198,7 @@ class _HomePageWebState extends State<HomePageWeb>
           ),
           const SizedBox(height: 10),
           // const Nearby(),
-          getListUI(), // Llamando al método que contiene la lista de hoteles
+          // getListUI(), // Llamando al método que contiene la lista de hoteles
           const SizedBox(height: 10),
         ],
       ),

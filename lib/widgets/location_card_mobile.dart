@@ -90,11 +90,11 @@ class _LocationCardMobileState extends State<LocationCardMobile> {
         _errorMessage = null;
       });
     } catch (e) {
-      setState(() {
+      // setState(() {
         _errorMessage =
             'Error al obtener ubicación o dirección: ${e.toString()}';
         _isLoading = false;
-      });
+      // });
     }
   }
 

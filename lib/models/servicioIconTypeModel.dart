@@ -11,10 +11,10 @@ class ServicioIconModel {
 
 List<ServicioIconModel> typeServices = [
   ServicioIconModel(name: "Todo", image: "assets/servicios/icons/all.png", true),
-  ServicioIconModel(name: "Albañil", image: "assets/servicios/icons/albanil.png",false),
   ServicioIconModel(name: "Plomero", image: "assets/servicios/icons/plomero.png",false),
   ServicioIconModel(name: "Electricista", image: "assets/servicios/icons/electrico.png",false),
   ServicioIconModel(name: "Carpintero", image: "assets/servicios/icons/carpintero.png",false),
   ServicioIconModel(name: "Pintor", image: "assets/servicios/icons/pintor.png",false),
   ServicioIconModel(name: "Herrero", image: "assets/servicios/icons/herrero.png",false),
+  ServicioIconModel(name: "Jardinero", image: "assets/servicios/icons/jardinero.png",false),
 ];

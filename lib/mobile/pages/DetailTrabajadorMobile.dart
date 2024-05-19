@@ -1,14 +1,24 @@
+import 'dart:ffi';
+
 import 'package:banner_carousel/banner_carousel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:ofimex/models/trabajador_list_data.dart';
+import 'package:ofimex/models/usuario/direccion.dart';
+
+import 'package:ofimex/models/usuario/trabajador.dart';
+import 'package:ofimex/models/usuario/trabajo.dart';
+import 'package:ofimex/provider/globales.dart';
+import 'package:ofimex/services/services.dart';
 import 'package:ofimex/theme/theme.dart';
 import 'package:ofimex/widgets/InputTextFoemField.dart';
 import 'package:ofimex/widgets/listButtons.dart';
+import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
-import 'package:rive/rive.dart';
+
 import 'package:text_area/text_area.dart';
 
 class DetailTrabajadorMobile extends StatefulWidget {
@@ -25,7 +35,6 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
   int selectedIndex = -1;
   //Descripción del trabajo
   final txtDescripcionController = TextEditingController();
-  final txtCostoController = TextEditingController();
 
   var reasonValidation = true;
   //Dirección
@@ -36,13 +45,46 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
   final txtCPController = TextEditingController();
   final txtNumeroExtController = TextEditingController();
   final txtNumeroIntController = TextEditingController();
+
+  int? idUsuario = 0;
+  int? idTrabajador = 0;
+  int idOficio = 0;
+  int idTrabajo = 0;
+
+  double latitud = 0.0;
+  double longitud = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _getLocation();
+  }
+
+  // Function to get the location
+  void _getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      latitud = position.latitude;
+      longitud = position.longitude;
+
+      print(position.latitude);
+      print(position.longitude);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TrabjadorListData trabajador =
-        ModalRoute.of(context)!.settings.arguments as TrabjadorListData;
-    txtCostoController.text = "0";
+    final Trabajador trabajador =
+        ModalRoute.of(context)!.settings.arguments as Trabajador;
+    final globales = context.watch<Globales>();
+
+    idUsuario = globales.usuario.id;
+    idOficio = trabajador.usuario!.oficio![0].idOficio;
+    idTrabajador = trabajador.id;
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.maxFinite,
         height: double.maxFinite,
         child: Stack(
@@ -53,9 +95,9 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
               child: Container(
                 width: double.maxFinite,
                 height: 300,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(trabajador.imagePath),
+                    image: AssetImage("assets/person.png"),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -99,55 +141,53 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            trabajador.titleTxt,
+                            "${trabajador.usuario!.nombre} ${trabajador.usuario!.apePat} ${trabajador.usuario!.apeMat}",
                             style: const TextStyle(
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 25),
                           ),
-                          Text(
-                            "${trabajador.servicio}",
-                            style: TextStyle(
-                                color: AppTheme().theme().primaryColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 23),
-                          ),
                         ],
+                      ),
+                      Text(
+                        "${trabajador.usuario!.oficio![0].oficio!.nombre}",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme().theme().primaryColor, ),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      const Row(
+                      Row(
                         children: [
                           Icon(
-                            Ionicons.location,
-                            color: Colors.black54,
+                            FontAwesomeIcons.certificate,
+                            color: AppTheme().theme().primaryColor,
                             size: 18,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
-                          Text("Teziutlán, Puebla"),
+                          Text("${trabajador.experiencia} años de experiencia"),
                         ],
                       ),
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          Wrap(children: [
-                            StarsReview(value: trabajador.rating, size: 24)
-                          ]),
+                          Wrap(children: [StarsReview(value: 5, size: 24)]),
                           const SizedBox(
                             width: 5,
                           ),
-                          Text(
-                            "(${trabajador!.rating})",
+                          const Text(
+                            "(5)",
                             style: TextStyle(fontSize: 18),
                           ),
                           TextButton(
                               onPressed: () {
                                 Navigator.of(context).pushNamed("/review");
                               },
-                              child: Text("Ver reseñas"))
+                              child: const Text("Ver reseñas"))
                         ],
                       ),
                       const SizedBox(height: 25),
@@ -175,52 +215,6 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
                         onTap: (value) {},
                         borderRadius: 20,
                       ),
-                      // const SizedBox(height: 25),
-                      // Text(
-                      //   "Chalanes",
-                      //   style: TextStyle(
-                      //       color: Colors.black.withOpacity(0.8),
-                      //       fontSize: 20,
-                      //       fontWeight: FontWeight.w600),
-                      // ),
-                      // const SizedBox(height: 5),
-                      // const Text(
-                      //   "Seleccione si requiere chalanes",
-                      //   style: TextStyle(
-                      //     color: Colors.black54,
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 10),
-                      // Wrap(
-                      //   children: List.generate(5, (index) {
-                      //     return InkWell(
-                      //       onTap: () {
-                      //         setState(() {
-                      //           selectedIndex = index;
-                      //         });
-                      //       },
-                      //       child: Container(
-                      //         margin:
-                      //             const EdgeInsets.only(right: 10, bottom: 10),
-                      //         child: ListButtons(
-                      //           color: selectedIndex == index
-                      //               ? Colors.white
-                      //               : Colors.black,
-                      //           size: 50,
-                      //           backgroundColor: selectedIndex == index
-                      //               ? Colors.black
-                      //               : Colors.grey.shade200,
-                      //           borderColor: selectedIndex == index
-                      //               ? Colors.black
-                      //               : Colors.grey.shade200,
-                      //           text: index.toString(),
-                      //           // icon: Ionicons.heart_outline,
-                      //           // isIcon: true,
-                      //         ),
-                      //       ),
-                      //     );
-                      //   }),
-                      // ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -248,39 +242,6 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
                 ),
               ),
             ),
-            // Positioned(
-            //   left: 20,
-            //   bottom: 20,
-            //   child: Row(
-            //     children: [
-            //       ListButtons(
-            //         color: Colors.grey,
-            //         backgroundColor: Colors.white,
-            //         borderColor: Colors.grey,
-            //         size: 50,
-            //         isIcon: true,
-            //         icon: Ionicons.heart_outline,
-            //       ),
-            //       MaterialButton(
-            //         onPressed: () {
-            //           Navigator.of(context).pushNamed("/pago");
-            //         },
-            //         child: Container(
-            //           width: 250,
-            //           height: 50,
-            //           decoration: BoxDecoration(
-            //               borderRadius: BorderRadius.circular(20),
-            //               color: AppTheme().theme().primaryColor,),
-            //           child: const Center(
-            //               child: Text(
-            //             "Comprar",
-            //             style: TextStyle(color: Colors.white),
-            //           )),
-            //         ),
-            //       )
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -363,23 +324,23 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
                 validation: reasonValidation,
                 errorText: 'No puede dejar el campo vacío!',
               ),
-              // const SizedBox(height: 15),
-              // // const Text(
-              // //   "Costo total",
-              // //   style: TextStyle(fontWeight: FontWeight.w600),
-              // // ),
-              // InputTexFormtField(
-              //     label: "Costo",
-              //     textController: txtCostoController,
-              //     icon: Icons.money_rounded,
-              //     inputType: TextInputType.number),
               ElevatedButton(
                 onPressed: () async {
                   SmartDialog.dismiss();
                   SmartDialog.showLoading(msg: "Cargando...");
-                  await Future.delayed(const Duration(seconds: 2));
+                  if (txtDescripcionController.text.isNotEmpty) {
+                    await Future.delayed(const Duration(seconds: 2));
+                    // ignore: use_build_context_synchronously
+                    agregarDireccion(context, "Agrega tu dirección");
+                  } else {
+                    mostrarDialogo(context, "Ingresa una descripción",
+                        Icons.warning, Colors.yellow);
+                    await Future.delayed(const Duration(seconds: 2));
+                    SmartDialog.dismiss();
+                  }
                   SmartDialog.dismiss();
-                  agregarDireccion(context, "Dirección");
+                  // await Future.delayed(const Duration(seconds: 2));
+                  // agregarDireccion(context, "Dirección");
                 },
                 child: const Text('Siguiente'),
               ),
@@ -412,23 +373,23 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
                 ),
               ),
               InputTexFormtField(
-                  label: "Municipio",
+                  label: "Municipio*",
                   textController: txtMunicipioController,
                   inputType: TextInputType.text),
               InputTexFormtField(
-                  label: "Colonia",
+                  label: "Colonia*",
                   textController: txtColoniaController,
                   inputType: TextInputType.text),
               InputTexFormtField(
-                  label: "Calle",
+                  label: "Calle*",
                   textController: txtCalleController,
                   inputType: TextInputType.text),
               InputTexFormtField(
-                  label: "CP",
+                  label: "CP*",
                   textController: txtCPController,
                   inputType: TextInputType.number),
               InputTexFormtField(
-                  label: "Núm. Ext",
+                  label: "Núm. Ext*",
                   textController: txtNumeroExtController,
                   inputType: TextInputType.number),
               InputTexFormtField(
@@ -440,12 +401,69 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  SmartDialog.dismiss();
                   SmartDialog.showLoading(msg: "Cargando...");
-                  await Future.delayed(const Duration(seconds: 2));
-                  SmartDialog.dismiss();
-                  // ignore: use_build_context_synchronously
-                  mostrarDialogo(context, "Solicitud enviada");
+                  final trabajo = Trabajo(
+                      descripcion: txtDescripcionController.text,
+                      costoTotal: 0,
+                      idUsuario: idUsuario!,
+                      idTrabajador: idTrabajador!,
+                      idOficio: idOficio);
+                  final response = await contratarTrabajador(trabajo);
+                  idTrabajo = response.trabajo!.id!;
+
+                  if (response.codigo == 200) {
+                    if (txtMunicipioController.text.isNotEmpty &&
+                        txtColoniaController.text.isNotEmpty &&
+                        txtCalleController.text.isNotEmpty &&
+                        txtCPController.text.isNotEmpty &&
+                        txtNumeroExtController.text.isNotEmpty) {
+                      if (txtNumeroIntController.text.isEmpty) {
+                        txtNumeroIntController.text = "N/A";
+                      }
+                      final address = Direccion(
+                          latitud: 10 ,
+                          longitud: 10,
+                          municipio: txtMunicipioController.text,
+                          colonia: txtColoniaController.text,
+                          calle: txtCalleController.text,
+                          cp: int.parse(txtCPController.text),
+                          numeroExt: int.parse(txtNumeroExtController.text),
+                          descripcion: txtNumeroIntController.text,
+                          idTrabajo: idTrabajo);
+                      final resp = await agregarDireccionTrabajo(address);
+                      if (resp.codigo == 200) {
+                        SmartDialog.dismiss();
+                        // ignore: use_build_context_synchronously
+                        mostrarDialogo(context, "Solicitud enviada",
+                            Icons.check, Colors.green);
+                        await Future.delayed(const Duration(seconds: 2));
+                        SmartDialog.dismiss();
+                      } else {
+                        SmartDialog.dismiss();
+
+                        // ignore: use_build_context_synchronously
+                        mostrarDialogo(context, "Error en la dirección",
+                            Icons.close, Colors.red);
+                      }
+                    } else {
+                      SmartDialog.dismiss();
+
+                      // ignore: use_build_context_synchronously
+                      mostrarDialogo(context, "Llene los campos requeridos",
+                          Icons.warning, Colors.yellow.shade600);
+                    }
+                  } else {
+                    // SmartDialog.dismiss();
+
+                    // ignore: use_build_context_synchronously
+                    mostrarDialogo(
+                        context,
+                        "Error al contratar: ${response.mensaje} ",
+                        Icons.cancel_outlined,
+                        Colors.red);
+                    await Future.delayed(const Duration(seconds: 2));
+                    SmartDialog.dismiss();
+                  }
                 },
                 child: const Text('Finalizar'),
               ),
@@ -457,7 +475,8 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
   }
 }
 
-mostrarDialogo(BuildContext context, String mensaje) {
+mostrarDialogo(
+    BuildContext context, String mensaje, IconData icon, Color color) {
   SmartDialog.show(builder: (_) {
     return Container(
       height: 200,
@@ -477,12 +496,13 @@ mostrarDialogo(BuildContext context, String mensaje) {
             ),
           ),
           const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () {
-              SmartDialog.dismiss();
-            },
-            child: const Text('Cerrar'),
-          ),
+          Center(
+            child: Icon(
+              icon,
+              color: color,
+              size: 60,
+            ),
+          )
         ],
       ),
     );
