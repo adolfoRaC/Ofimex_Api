@@ -246,7 +246,7 @@ class _RegistrarTrabajadorState extends State<RegistrarTrabajador> {
                           if (value != null && value) {
                             _oficiosSeleccionados.add(OficioTrabajo(
                               idOficio: oficio.id,
-                              idUsuario: idUsuario!,
+                              idTrabajador: idUsuario!,
                             ));
                           } else {
                             _oficiosSeleccionados.removeWhere(

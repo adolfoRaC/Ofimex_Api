@@ -6,10 +6,10 @@ class Trabajo {
   int? id;
   String descripcion;
   int costoTotal;
-  int? idEstado;
   int idUsuario;
   int idTrabajador;
   int idOficio;
+  int? idEstado;
   Trabajador? trabajador;
   List<Direccion>? direccion;
   Usuario? usuario;
@@ -52,6 +52,20 @@ class Trabajo {
       trabajador: trabajadorData,
       direccion: direccionList,
       usuario: usuarioData,
+    );
+  }
+
+  factory Trabajo.getJsonAgregar(Map<String, dynamic> json) {
+    Trabajador? trabajadorData;
+ 
+    return Trabajo(
+      id: json['id'],
+      descripcion: json['descripcion'],
+      costoTotal: json['costoTotal'],
+      idUsuario: json['idUsuario'],
+      idTrabajador: json['idTrabajador'],
+      idOficio: json['idOficio'],
+      idEstado: json['idEstado'],
     );
   }
 

@@ -69,7 +69,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       height: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: Image.asset("assets/profile_image.jpg"),
+                        child: Image.network(globales.usuario.imagen!,fit: BoxFit.cover,),
                       ),
                     ),
                     Positioned(
@@ -155,7 +155,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 txtCorreoController.text.isNotEmpty &&
                                 txtPasswordController.text.isNotEmpty &&
                                 gender.isNotEmpty) {
-                              Usuario user = Usuario(id: globales.usuario.id,nombre: txtNombreController.text, apePat: txtApePatController.text, apeMat: txtApeMatController.text, sexo: gender, correo: txtCorreoController.text, usuario: txtUsuarioController.text, pwd: txtPasswordController.text, idRol: globales.usuario.idRol);
+                              Usuario user = Usuario(id: globales.usuario.id,nombre: txtNombreController.text, apePat: txtApePatController.text, apeMat: txtApeMatController.text, sexo: gender, correo: txtCorreoController.text, usuario: txtUsuarioController.text, pwd: txtPasswordController.text,imagen: globales.usuario.imagen, idRol: globales.usuario.idRol);
                               final ResponseAuth response = await actualizarUsuario(user);
 
                               if(response.codigo == 200){

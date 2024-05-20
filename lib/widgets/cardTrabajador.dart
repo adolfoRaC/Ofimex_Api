@@ -67,10 +67,7 @@ class TrabajadorListView extends StatelessWidget {
                   children: <Widget>[
                     AspectRatio(
                       aspectRatio: 2,
-                      child: Image.asset(
-                        "assets/person.png",
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.network(trabajadorData!.usuario!.imagen!, fit: BoxFit.cover,),
                     ),
                     Container(
                       color: HotelAppTheme.buildLightTheme().backgroundColor,

@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            width: isWeb ? 700: double.infinity,
+            width: isWeb ? 700 : double.infinity,
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
@@ -31,9 +31,7 @@ class ProfileScreen extends StatelessWidget {
                       height: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: const Image(
-                            image: AssetImage(
-                                "assets/profile_image.jpg")), // Reemplazar con la ruta correcta de la imagen de perfil
+                        child: Image.network(globales.usuario.imagen!,fit: BoxFit.cover),
                       ),
                     ),
                     Positioned(
@@ -44,7 +42,9 @@ class ProfileScreen extends StatelessWidget {
                         height: 35,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
-                          color: AppTheme().theme().primaryColor, // Cambiar a tu color preferido
+                          color: AppTheme()
+                              .theme()
+                              .primaryColor, // Cambiar a tu color preferido
                         ),
                         child: const Icon(
                           Icons
@@ -56,8 +56,9 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                 const SizedBox(height: 10),
-                Text("${globales.usuario.nombre} ${globales.usuario.apePat} ${globales.usuario.apeMat}",
+                const SizedBox(height: 10),
+                Text(
+                    "${globales.usuario.nombre} ${globales.usuario.apePat} ${globales.usuario.apeMat} ${globales.usuario.id}",
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge), // Reemplazar con el nombre del usuario
@@ -66,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                         .textTheme
                         .titleMedium), // Reemplazar con el subtítulo del perfil
                 const SizedBox(height: 20),
-          
+
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
@@ -84,11 +85,11 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 const Divider(),
                 const SizedBox(height: 10),
-          
+
                 ProfileMenuWidget(
-                    title: "Configuración", icon: Icons.settings, onPress: () {
-                      
-                    }),
+                    title: "Configuración",
+                    icon: Icons.settings,
+                    onPress: () {}),
                 ProfileMenuWidget(
                     title: "Información personal",
                     icon: Icons.account_balance_wallet,
@@ -97,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
                     }),
                 ProfileMenuWidget(
                     title: "Gestión de trabajador",
-                    icon: Icons.group,  
+                    icon: Icons.group,
                     onPress: () {
                       Navigator.of(context).pushNamed("/registroTrabajador");
                     }),
@@ -111,7 +112,8 @@ class ProfileScreen extends StatelessWidget {
                   textColor: Colors.red,
                   endIcon: false,
                   onPress: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil("/", (route) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil("/", (route) => false);
                   },
                 ),
               ],

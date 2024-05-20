@@ -4,13 +4,13 @@ import 'package:ofimex/models/usuario/oficio.dart';
 class OficioTrabajo {
   int? id;
   int idOficio;
-  int idUsuario;
+  int idTrabajador;
   Oficio? oficio;
 
   OficioTrabajo({
     this.id,
     required this.idOficio,
-    required this.idUsuario,
+    required this.idTrabajador,
     this.oficio,
   });
 
@@ -22,7 +22,7 @@ class OficioTrabajo {
     return OficioTrabajo(
       id: json['id'],
       idOficio: json['idOficio'],
-      idUsuario: json['idUsuario'],
+      idTrabajador: json['idTrabajador'],
       oficio: oficioData,
     );
   }
@@ -31,7 +31,7 @@ class OficioTrabajo {
     return {
       'id': id,
       'idOficio': idOficio,
-      'idUsuario': idUsuario,
+      'idTrabajador': idTrabajador,
     };
   }
 }

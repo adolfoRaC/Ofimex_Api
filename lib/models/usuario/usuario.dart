@@ -12,6 +12,7 @@ class Usuario {
   String correo;
   String usuario;
   String pwd;
+  String? imagen;
   int idRol;
   Rol? rol;
   List<OficioTrabajo>? oficio;
@@ -26,6 +27,7 @@ class Usuario {
     required this.correo,
     required this.usuario,
     required this.pwd,
+    this.imagen,
     required this.idRol,
     this.rol,
     this.oficio,
@@ -50,6 +52,7 @@ class Usuario {
       correo: json["correo"],
       usuario: json["usuario"],
       pwd: json["pwd"],
+      imagen: json['imagen'],
       idRol: json["idRol"],
       rol: Rol.getJson(json['rol']),
       oficio: oficiosList,

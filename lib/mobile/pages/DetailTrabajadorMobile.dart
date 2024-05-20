@@ -95,12 +95,7 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
               child: Container(
                 width: double.maxFinite,
                 height: 300,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/person.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                child: Image.network(trabajador.usuario!.imagen!),
               ),
             ),
             Positioned(
@@ -401,6 +396,8 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                        SmartDialog.dismiss();
+
                   SmartDialog.showLoading(msg: "Cargando...");
                   final trabajo = Trabajo(
                       descripcion: txtDescripcionController.text,
@@ -421,8 +418,8 @@ class _DetailTrabajadorMobileState extends State<DetailTrabajadorMobile> {
                         txtNumeroIntController.text = "N/A";
                       }
                       final address = Direccion(
-                          latitud: 10 ,
-                          longitud: 10,
+                          latitud: latitud,
+                          longitud: longitud,
                           municipio: txtMunicipioController.text,
                           colonia: txtColoniaController.text,
                           calle: txtCalleController.text,

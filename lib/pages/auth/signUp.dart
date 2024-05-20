@@ -1,7 +1,10 @@
 // ignore_for_file: file_names
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:ofimex/models/usuario/responseAuth.dart';
 import 'package:ofimex/models/usuario/usuario.dart';
@@ -18,6 +21,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  File? imagen;
   final txtCorreoController = TextEditingController();
   final txtPwdController = TextEditingController();
   final txtPwdConfirmController = TextEditingController();
@@ -50,8 +54,10 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
+ 
     final correo = txtCorreoController.text;
     final pwd = txtPwdController.text;
     final pwdConfirm = txtPwdConfirmController.text;
@@ -169,9 +175,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             height: 60,
                             onPressed: () async {
                               if (nombre.isNotEmpty &&
-                                      usuario.isNotEmpty &&
-                                      gender.isNotEmpty
-                                      ) {
+                                  usuario.isNotEmpty &&
+                                  gender.isNotEmpty &&
+                                  imagen != null) {
                                 List<String> nombreDestructurado =
                                     nombre.trim().split(' ');
                                 // Obtener nombre y apellidos
@@ -194,13 +200,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                   apeMat = nombreDestructurado[2];
                                 } else if (nombreDestructurado.length == 4) {
                                   nombreCompleto =
-                                      "$nombreDestructurado[0] $nombreDestructurado[1]";
+                                      "${nombreDestructurado[0]} ${nombreDestructurado[1]}";
                                   apePat = nombreDestructurado[2];
                                   apeMat = nombreDestructurado[3];
                                 }
-                                // print(nombreCompleto);
-                                // print(apePat);
-                                // print(apeMat);
+                                print(nombreCompleto);
+                                print(apePat);
+                                print(apeMat);
 
                                 final user = Usuario(
                                   nombre: nombreCompleto,
@@ -216,7 +222,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     msg: "Registrando usuario...");
 
                                 ResponseAuth response =
-                                    await agregarUsuario(user);
+                                    await agregarUsuario(user, imagen!);
 
                                 SmartDialog.dismiss();
 
@@ -288,6 +294,16 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  Future SeleccionarImagenGaleria() async {
+    final picture = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picture == null) {
+      return;
+    }
+    setState(() {
+      imagen = File(picture.path);
+    });
   }
 
   mostrarDialogo(
@@ -386,7 +402,6 @@ class _SignUpPageState extends State<SignUpPage> {
             return null;
           },
         ),
-
         Row(
           children: [
             Checkbox(
@@ -405,26 +420,23 @@ class _SignUpPageState extends State<SignUpPage> {
             const Text("Mujer"),
           ],
         ),
-
-        // const SizedBox(height: 20),
-        // Otros campos del formulario
-        // MaterialButton(
-        //   minWidth: double.infinity,
-        //   height: 60,
-        //   onPressed: () {
-        //     // Lógica para el otro formulario
-        //   },
-        //   color: AppTheme().theme().primaryColor,
-        //   elevation: 0,
-        //   shape: RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(50)),
-        //   child: const Text(
-        //     "Finalizar registro",
-        //     style: TextStyle(
-        //         fontWeight: FontWeight.w600, fontSize: 18,
-        //         color: Colors.white),
-        //   ),
-        // ),
+        SizedBox(
+          width: 200,
+          child: ElevatedButton(
+            onPressed: () async {
+              await SeleccionarImagenGaleria();
+              setState(() {}); // Actualiza el estado dentro del diálogo
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme().theme().primaryColor,
+              shape: const StadiumBorder(),
+            ),
+            child: imagen == null
+                ? const Text("Subir Evidencia",
+                    style: TextStyle(color: Colors.white))
+                : const Icon(Icons.check_circle, color: Colors.green),
+          ),
+        ),
       ],
     );
   }

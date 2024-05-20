@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:ofimex/models/usuario/comentario.dart';
 import 'package:ofimex/models/usuario/direccion.dart';
-import 'package:ofimex/models/usuario/getTrabajos.dart';
+
 
 import 'package:ofimex/models/usuario/login.dart';
 import 'package:ofimex/models/usuario/oficio.dart';
@@ -12,36 +14,42 @@ import 'package:ofimex/models/usuario/trabajador.dart';
 import 'package:ofimex/models/usuario/trabajo.dart';
 import 'package:ofimex/models/usuario/usuario.dart';
 
-const String ip = "192.168.1.67:3000";
-// const String ip = "172.16.18.93:3000";
-
-Future<ResponseAuth> agregarUsuario(Usuario usuario) async {
+// const String ip = "192.168.1.67:3000";
+const String ip = "172.16.20.40:3000";
+Future<ResponseAuth> agregarUsuario(Usuario usuario, File imagen) async {
   final url = Uri.parse('http://$ip/usuario');
 
   try {
-    // Hacemos la solicitud POST con un cuerpo JSON
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(usuario.toJson()),
-    );
+    var request = http.MultipartRequest('POST', url)
+      ..fields.addAll({
+        'nombre': usuario.nombre,
+        'apePat': usuario.apePat,
+        'apeMat': usuario.apeMat,
+        'sexo': usuario.sexo,
+        'correo': usuario.correo,
+        'usuario': usuario.usuario,
+        'pwd': usuario.pwd,
+        'idRol': usuario.idRol.toString(),
+      })
+      ..files.add(await http.MultipartFile.fromPath(
+        'foto', 
+        imagen.path,
+        // contentType: MediaType('image', 'jpeg'), // Ajusta el tipo de contenido según corresponda
+      ));
+
+    var response = await request.send();
 
     if (response.statusCode == 200) {
-      // Éxito: aquí manejamos la respuesta
-      jsonDecode(response.body);
-      // print('Respuesta del servidor: $responseData');
+      // var responseData = await response.stream.toBytes();
       return ResponseAuth(codigo: 200, mensaje: "Registrado correctamente");
     } else {
-      // print('Error al hacer la solicitud: ${response.statusCode}');
-      return ResponseAuth(codigo: 404, mensaje: "Algo salio mal");
+      return ResponseAuth(codigo: 404, mensaje: "Algo salió mal");
     }
   } catch (error) {
-    // print('Error en la solicitud POST: $error');
-    return ResponseAuth(codigo: 500, mensaje: "Error en la solicitud");
+    return ResponseAuth(codigo: 500, mensaje: "Error en la solicitud: $error");
   }
 }
+
 
 Future<ResponseAuth> loginUser(Login login) async {
   final url = Uri.parse("http://$ip/login");
@@ -238,7 +246,7 @@ Future<List<Trabajador>> getTrabajadoresOficio(int idOficio) async {
 
 Future<ResponseAuth> contratarTrabajador(Trabajo trabajo) async {
   final url = Uri.parse('http://$ip/trabajos');
-  // print(jsonDecode(trabajo.toJson()));
+  // print(jsonEncode(trabajo.toJson()));
   try {
     // Hacemos la solicitud POST con un cuerpo JSON
     final response = await http.post(
@@ -252,8 +260,8 @@ Future<ResponseAuth> contratarTrabajador(Trabajo trabajo) async {
     if (response.statusCode == 200) {
       // Éxito: aquí manejamos la respuesta
     final responseData = jsonDecode(response.body);
-      final trabajo = Trabajo.getJson(responseData);
-      // print('Respuesta del servidor: ${response.body}');
+      final trabajo = Trabajo.getJsonAgregar(responseData);
+      print('Respuesta del servidor: ${trabajo}');
       return ResponseAuth(codigo: 200, mensaje: "Agregado", trabajo: trabajo);
     } else {
       // print('Error al hacer la solicitud: ${response.statusCode}');
@@ -316,7 +324,29 @@ Future<List<Trabajo>> getTrabajosTrabajador(int idOficio, int idTrabajador) asyn
   }
 }
 
-Future<ResponseAuth> aceptarTrabajo(Trabajo trabajo, idTrabajo) async {
+
+Future<List<Trabajo>> getTrabajosCliente(int idEmpleador) async {
+  final urlAPI = Uri.parse('http://$ip/trabajos/e?idEmp=$idEmpleador');
+
+  try {
+    final response = await http.get(urlAPI);
+
+    if (response.statusCode == 200) {
+
+      final jsonData = json.decode(response.body);
+      final List<Trabajo> trabajo = (jsonData as List)
+          .map((item) => Trabajo.getJson(item))
+          .toList();
+
+      return trabajo;
+    } else {
+      throw Exception('Error: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Error: $e');
+  }
+}
+Future<ResponseAuth> actualizarTrabajo(Trabajo trabajo, idTrabajo) async {
   final url = Uri.parse('http://$ip/trabajos/$idTrabajo');
 
   try {
@@ -336,6 +366,53 @@ Future<ResponseAuth> aceptarTrabajo(Trabajo trabajo, idTrabajo) async {
       return ResponseAuth(codigo: 200, mensaje: "Trabajo aceptado");
     } else {
       print('Error al hacer la solicitud: ${response.statusCode}');
+      return ResponseAuth(codigo: 404, mensaje: "Algo salio mal");
+    }
+  } catch (error) {
+    // print('Error en la solicitud POST: $error');
+    return ResponseAuth(codigo: 500, mensaje: "Error en la solicitud");
+  }
+}
+
+
+Future<String> subirEvidenciaTrabajo(File image, int idTrabajo) async {
+    final uri = Uri.parse('http://$ip/evidencias');
+
+    var request = http.MultipartRequest('POST', uri)
+      ..fields['idTrabajo'] = idTrabajo.toString()
+      ..files.add(await http.MultipartFile.fromPath('foto', image.path));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.toBytes();
+      return String.fromCharCodes(responseData);
+    } else {
+      throw Exception('Error al subir la imagen: ${response.statusCode}');
+    }
+  }
+
+  Future<ResponseAuth> agragarComentario(Comentario comentario) async {
+  final url = Uri.parse('http://$ip/comentario');
+
+  try {
+    // Hacemos la solicitud POST con un cuerpo JSON
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(comentario.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+
+      final responseData = jsonDecode(response.body);
+      final comentarioData = Comentario.getJson(responseData);
+      // print('Respuesta del servidor: $responseData');
+      return ResponseAuth(codigo: 200, mensaje: "Comentario agregado", comentario: comentarioData);
+    } else {
+      // print('Error al hacer la solicitud: ${response.statusCode}');
       return ResponseAuth(codigo: 404, mensaje: "Algo salio mal");
     }
   } catch (error) {

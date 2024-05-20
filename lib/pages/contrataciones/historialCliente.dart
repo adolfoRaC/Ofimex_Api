@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:ofimex/models/usuario/trabajo.dart';
 import 'package:ofimex/provider/globales.dart';
 import 'package:ofimex/services/services.dart';
-import 'package:ofimex/widgets/cardHistorialTrabajador.dart';
-import 'package:provider/provider.dart';
+import 'package:ofimex/widgets/cardHistorialCliente.dart';
 
-class HistorialTrabajador extends StatefulWidget {
-  const HistorialTrabajador({super.key});
+import 'package:provider/provider.dart';
+class HistorialCliente extends StatefulWidget {
+  const HistorialCliente({super.key});
 
   @override
-  State<HistorialTrabajador> createState() => _HistorialTrabajadorState();
+  State<HistorialCliente> createState() => _HistorialClienteState();
 }
 
-class _HistorialTrabajadorState extends State<HistorialTrabajador> {
-  late Future<List<Trabajo>> _futureTrabajos;
-
+class _HistorialClienteState extends State<HistorialCliente> {
+   late Future<List<Trabajo>> _futureTrabajos;
+  
   @override
   void initState() {
     super.initState();
@@ -24,15 +24,14 @@ class _HistorialTrabajadorState extends State<HistorialTrabajador> {
   void _loadTrabajos() {
     final globales = context.read<Globales>();
     setState(() {
-      _futureTrabajos = getTrabajosTrabajador(
-          globales.usuario.oficio![0].idOficio,
-          globales.usuario.trabajador!.id!);
+      _futureTrabajos = getTrabajosCliente(
+          globales.usuario.id!);
     });
   }
+
+  
   @override
   Widget build(BuildContext context) {
-    // final globales = context.watch<Globales>();
-
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -62,7 +61,7 @@ class _HistorialTrabajadorState extends State<HistorialTrabajador> {
                             // print(trabajo[index]);
                             return Column(
                               children: [
-                                WorkerServiceCard(trabajo: trabajo[index], onRefresh: _loadTrabajos, ),
+                                WorkerServiceCardCliente(trabajo: trabajo[index], onRefresh: _loadTrabajos, ),
                                 const SizedBox(height: 10,)
                               ],
                             );

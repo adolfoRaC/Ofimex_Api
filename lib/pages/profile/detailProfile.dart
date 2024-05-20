@@ -38,9 +38,7 @@ class DetailProfile extends StatelessWidget {
                                 height: 120,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
-                                  child: const Image(
-                                      image: AssetImage(
-                                          "assets/profile_image.jpg")), // Reemplazar con la ruta correcta de la imagen de perfil
+                                  child: Image.network(globales.usuario.imagen!,fit: BoxFit.cover,),
                                 ),
                               ),
                               Positioned(

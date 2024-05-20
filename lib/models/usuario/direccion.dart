@@ -1,8 +1,8 @@
 
 class Direccion {
   int? id;
-  int latitud;
-  int longitud;
+  double latitud;
+  double longitud;
   String municipio;
   String colonia;
   String calle;

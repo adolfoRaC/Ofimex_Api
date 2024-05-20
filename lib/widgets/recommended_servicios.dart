@@ -67,8 +67,8 @@ class RecommendedServicos extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                "assets/person.png",
+                              child: Image.network(
+                                listTrabajador[index].usuario!.imagen!,
                                 width: double.maxFinite,
                                 fit: BoxFit.cover,
                                 height: 150,
