@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario{
+  id Int @id @default(autoincrement())
+  nombre String @db.VarChar(50)
+  apePat String @db.VarChar(30)
+  apeMat String @db.VarChar(30)
+  sexo String @db.VarChar(20)
+  correo String @db.VarChar(150)
+  usuario String @unique @db.VarChar(50) 
+  pwd String @db.VarChar(50)
+  imagen String @db.VarChar(500)
+  rol Rol @relation(fields: [idRol], references: [id])
+  idRol Int @db.Int
+  trabajador Trabajador[]
+  oficio OficioTrabajado[]
+  historial HistorialTrabajos[]
+  calificaciones Calificaciones[]
+}
+
+
+model Rol{
+  id Int @id @default(autoincrement())
+  nombre String @db.VarChar(30)
+  usuarios Usuario[]
+}
+
+model Trabajador{
+  id Int @id @default(autoincrement())
+  edad Int @db.Int
+  experiencia Int @db.SmallInt
+  trabajos Int @db.Int
+  disponible Boolean @db.Bit(1)
+  membresia DateTime @db.DateTime()
+  usuario Usuario @relation(fields: [idUsuario], references: [id])
+  idUsuario Int @db.Int
+  historial HistorialTrabajos[]
+  calificaciones Calificaciones[]
+}
+
+model Oficio{
+  id Int @id @default(autoincrement())
+  nombre String @db.VarChar(30)
+  oficioTrabajado OficioTrabajado[]
+  historial HistorialTrabajos[]
+}
+
+model OficioTrabajado{
+  id Int @id @default(autoincrement())
+  oficio Oficio @relation(fields: [idOficio], references: [id])
+  idOficio Int @db.Int
+  trabajador Usuario @relation(fields: [idTrabajador], references: [id])
+  idTrabajador Int @db.Int
+}
+
+model HistorialTrabajos{
+  id Int @id @default(autoincrement())
+  descripcion String @db.VarChar(250)
+  costoTotal Int @db.Int
+  estado Estado @relation(fields: [idEstado], references: [id])
+  idEstado Int @db.Int
+  usuario Usuario @relation(fields: [idUsuario], references: [id])
+  idUsuario Int @db.Int
+  trabajador Trabajador @relation(fields: [idTrabajador], references: [id])
+  idTrabajador Int @db.Int
+  oficio Oficio @relation(fields: [idOficio], references: [id])
+  idOficio Int @db.Int
+  comentarios Comentarios[]
+  evidencias EvidenciaTrabajos[]
+  direcciones Direccion[]
+}
+
+model Estado{
+  id Int @id @default(autoincrement())
+  nombre String @db.VarChar(20)
+  trabajos HistorialTrabajos[]
+}
+
+model Comentarios{
+  id Int @id @default(autoincrement())
+  mensaje String @db.VarChar(250)
+  calificacion Int @db.TinyInt
+  trabajo HistorialTrabajos @relation(fields: [idTrabajo], references: [id])
+  idTrabajo Int @db.Int
+  imagen ImagenComentarios[]
+}
+
+model EvidenciaTrabajos{
+  id Int @id @default(autoincrement())
+  idImagen String @db.VarChar(500)
+  trabajo HistorialTrabajos @relation(fields: [idTrabajo], references: [id])
+  idTrabajo Int @db.Int
+}
+
+model ImagenComentarios{
+  id Int @id @default(autoincrement())
+  idImagen String @db.VarChar(500)
+  comentario Comentarios @relation(fields: [idComentario], references: [id])
+  idComentario Int @db.Int
+}
+
+model Calificaciones{
+  id Int @id @default(autoincrement())
+  calificacion Int @db.TinyInt
+  usuario Usuario @relation(fields: [idUsuario], references: [id])
+  idUsuario Int @db.Int
+  trabajador Trabajador @relation(fields: [idTrabajador], references: [id])
+  idTrabajador Int @db.Int
+}
+
+model Direccion{
+  id Int @id @default(autoincrement())
+  latitud Decimal @db.Decimal(9, 6)
+  longitud Decimal @db.Decimal(9, 6)
+  municipio String @db.VarChar(35)
+  colonia String @db.VarChar(35)
+  calle String @db.VarChar(50)
+  cp Int @db.Int()
+  numeroExt Int @db.SmallInt()
+  descripcion String @db.VarChar(50)
+  trabajo HistorialTrabajos @relation(fields: [idTrabajo], references: [id])
+  idTrabajo Int @db.Int
+}
