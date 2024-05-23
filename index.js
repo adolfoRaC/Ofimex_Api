@@ -597,23 +597,34 @@ app.get('/comentarios/:idT', async (req, res) => {
 
 //Consultar los comentarios por oficio
 app.get('/comentarios/:idT/:idO', async (req, res) => {
-    const { idT, idO } = req.params
-    const trabajos = await prisma.historialTrabajos.findMany({
-        where: {
-            idTrabajador: Number(idT),
-            idOficio: Number(idO)
-        },
-        include: {
-            comentarios: { include: { imagen: true } },
-            usuario: { include: { rol: true, oficio: { include: { oficio: true } } } }
-        }
-    })
-    if (trabajos == null) {
-        return res.status(404).json({ mensaje: "No se encontró ningun comentario" })
+    const { idT, idO } = req.params;
+
+    try {
+        const trabajos = await prisma.historialTrabajos.findMany({
+            where: {
+                idTrabajador: Number(idT),
+                idOficio: Number(idO)
+            },
+            include: {
+                comentarios: { include: { imagen: true } },
+                usuario: { include: { rol: true, oficio: { include: { oficio: true } } } }
+            }
+        });
+
+        // Filtrar los trabajos que tienen comentarios
+        const trabajosConComentarios = trabajos.filter(trabajo => trabajo.comentarios.length > 0);
+
+        // if (trabajosConComentarios.length === 0) {
+        //     return res.status(404).json({ mensaje: "No se encontró ningun comentario" });
+        // }
+
+        res.json(trabajosConComentarios);
+    } catch (error) {
+        console.error("Error al obtener los comentarios:", error);
+        res.status(500).json({ mensaje: "Error al obtener los comentarios" });
     }
-    // const comentarios = trabajos.map(trabajo => {trabajo.comentarios, trabajo.usuario});
-    res.json(trabajos);
-})
+});
+
 
 //Obtiene la cantidad de calificaciónes por 1,2,4, y 5 estrellas
 app.get('/comentariosContador/:idT/:idO', async (req, res) => {
