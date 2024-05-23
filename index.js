@@ -1,4 +1,6 @@
 const express = require('express')
+
+
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client')
 
@@ -27,6 +29,60 @@ cloudinary.config({
     api_secret: 'mHyA_W045Ntyito2DLqKtdWGjHk'
 });
 
+const { ImageAnalysisClient } = require('@azure-rest/ai-vision-image-analysis');
+const createClient = require('@azure-rest/ai-vision-image-analysis').default;
+const { AzureKeyCredential } = require('@azure/core-auth');
+
+// Load the .env file if it exists
+require("dotenv").config();
+
+const endpoint = 'https://ofimex.cognitiveservices.azure.com/';
+const key = '13bcade2f8114c0ab14f4c56fff7d97c';
+const credential = new AzureKeyCredential(key);
+
+const client = createClient(endpoint, credential);
+
+const features = [
+    'Read'
+];
+
+
+async function analyzeImageFromUrl(imageUrl) {
+
+    const result = await client.path('/imageanalysis:analyze').post({
+        body: {
+            url: imageUrl
+        },
+        queryParameters: {
+            features: features,
+            'smartCrops-aspect-ratios': [0.9, 1.33]
+        },
+        contentType: 'application/json'
+    });
+
+    const iaResult = result.body;
+
+    let lines;
+
+    if (iaResult.readResult) {
+        iaResult.readResult.blocks.forEach(block => {
+            lines = block.lines.map(line => line.text); 
+            console.log(lines)
+          
+        });
+    }
+
+    return lines
+
+}
+
+function belong(text) {
+    if (text == "FECHA DE NACIMIENTO" || text == "FECHA NACIMIENTO" || text == "DOMICILIO" || text == "SEXO M" || text == "SEXO H" || String(text).match(/\b\d{2}\/\d{2}\/\d{4}\b/)) {
+        return false
+    }else{
+        return true
+    }
+}
 
 const app = express();
 app.use(express.json());
@@ -37,6 +93,60 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+//Azure's Endpoint 
+app.post('/image/analyze', upload.single('picture'), async (req, res) => {
+    
+
+    let path = req.file.destination + '/' + req.file.filename;
+    let url = "";
+    cloudinary.uploader.upload(path,
+        { public_id: "INEPrueba"+new Date() },
+        async (error, result) => {
+            console.log(error)
+    const lines = await analyzeImageFromUrl(result.url)
+    let name;
+    let fathLastName;
+    let mothLastName;
+    let countNames = 0;
+    let counter = 0;
+     lines.forEach(text => {
+        if (text == "NOMBRE") {
+            counter++
+            for (let index = 0; index < 5; index++) {
+                
+                if (belong(lines[(counter+index)])) {
+
+                    console.log(lines[[counter+index]])
+                    switch (countNames) {
+                        case 0:
+                            fathLastName = lines[(counter+index)];
+                            countNames++
+                            break;
+                        case 1:
+                                mothLastName = lines[(counter+index)];
+                                countNames++
+                                break;        
+                        case 2:
+                            name = lines[(counter+index)];
+                            countNames++
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                    
+            }
+        }else{
+            counter ++
+        }
+     });
+     
+     res.json({nombre: name, apellidoPaterno: fathLastName, apellidoMaterno: mothLastName})
+ })
+
+});
+
 //EndPoints donde se utiliza la tabla Usuarios
 
 //Login
@@ -430,7 +540,9 @@ app.get('/calificacion', async (req, res) => {
     }
 
     calificacion = cont / cont1;
-    res.json({ calificacion: calificacion }); // Devolver la calificación en ambos casos
+    calificacionRedondeada = parseFloat(calificacion.toFixed(1));
+
+    res.json({ calificacion: calificacionRedondeada }); // Devolver la calificación en ambos casos
 });
 
 
@@ -461,6 +573,17 @@ app.get('/calificacionT', async (req, res) => {
     }
     calificacion = cont / cont1
     res.json(calificacion)
+})
+
+//Agregar un nuevo comentario
+app.post('/comentario', async (req, res) => {
+    const { mensaje, calificacion, idTrabajo } = req.body
+    const resultado = await prisma.comentarios.create({
+        data: {
+            mensaje, calificacion, idTrabajo
+        }
+    })
+    res.json(resultado);
 })
 
 //Consultar comentarios por trabajo
